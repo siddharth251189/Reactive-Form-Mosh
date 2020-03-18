@@ -29,3 +29,45 @@ export class AppModule { }
 
 ```
 
+## Creating Controls Programmaticlly
+For creating control in reactive form we need to import FormGroup and FormControl from @angular/forms.
+```typescript
+import {FormGroup , FormControl} from '@angular/forms'
+```
+
+After that we need to create copy of FormGroup holding in a variable and create control.
+
+### Create form
+```typescript
+signupForm=new FormGroup();
+```
+
+### Create form control
+```typescript
+signupForm=new FormGroup({
+    userName:new FormControl(),
+    email:new FormControl()
+  })
+```
+
+## Now we need to sync this form with html form and control.
+
+### Sync form with html form
+We need to add formGroup property in form tag and assign your form from typescript file.
+```html
+<form [formGroup]="signupForm"></form>
+```
+
+### Sync control with html control
+We need to add FormControlName html control tag and assign your control name from typescript file.
+```html
+<div class="form-group">
+          <label for="">User Name</label>
+          <input type="text" 
+          class="form-control"
+          FormControlName="userName"
+          
+          >
+```
+
+## Adding Validation
