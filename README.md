@@ -70,4 +70,76 @@ We need to add FormControlName html control tag and assign your control name fro
           >
 ```
 
+### app.module.ts
+```typescript
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+
+import { AppComponent } from './app.component';
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    ReactiveFormsModule
+   
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+```
+### app.component.ts
+```typescript
+import { Component, ViewChild } from '@angular/core';
+import {FormGroup , FormControl} from '@angular/forms'
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  signupForm=new FormGroup({
+    userName:new FormControl(),
+    email:new FormControl()
+  })
+
+}
+
+
+```
+### app.component.html
+```html
+<div class="container">
+  <div class="row">
+    <form [formGroup]="signupForm">
+      <div class="col-lg-12">
+        <div class="form-group">
+          <label for="">User Name</label>
+          <input type="text" 
+          class="form-control"
+          FormControlName="userName"
+          
+          >
+        </div>
+        <div class="form-group">
+          <label for="">Email</label>
+          <input type="text" 
+          class="form-control"
+          FormControlName="email"
+          >
+        </div>
+        <button class="btn btn-primary" type="submit">Submit</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+```
+
 ## Adding Validation
