@@ -59,15 +59,16 @@ We need to add formGroup property in form tag and assign your form from typescri
 ```
 
 ### Sync control with html control
-We need to add FormControlName html control tag and assign your control name from typescript file.
+We need to add formControlName html control tag and assign your control name from typescript file.
 ```html
 <div class="form-group">
           <label for="">User Name</label>
           <input type="text" 
           class="form-control"
-          FormControlName="userName"
-          
+          formControlName="userName"
           >
+        
+</div>
 ```
 
 ### app.module.ts
@@ -123,7 +124,7 @@ export class AppComponent {
           <label for="">User Name</label>
           <input type="text" 
           class="form-control"
-          FormControlName="userName"
+          formControlName="userName"
           
           >
         </div>
@@ -131,7 +132,7 @@ export class AppComponent {
           <label for="">Email</label>
           <input type="text" 
           class="form-control"
-          FormControlName="email"
+          formControlName="email"
           >
         </div>
         <button class="btn btn-primary" type="submit">Submit</button>
@@ -143,3 +144,64 @@ export class AppComponent {
 ```
 
 ## Adding Validation
+### Steps
+
+1. For adding validation we need to import Validators form @angular/forms.
+```typescript
+import {FormGroup , FormControl, Validators} from '@angular/forms'
+```
+2. After that use this function in formControl as a second argument.
+```typescript
+userName:new FormControl(null,Validators.required),
+```
+## Showing Validation Message Method 1
+```html
+
+ <div class="form-group">
+          <label for="">User Name</label>
+          <input type="text" 
+          class="form-control"
+          formControlName="userName"
+          >
+          <div *ngIf="signupForm.get('userName').touched && signupForm.get('userName').invalid" class="alert alert-danger">Username is required</div>
+        </div>
+```
+## Showing Validation Message Method 2
+In method one there is lots of code. we can optimise this code by using a get function. for this we need to add a get function to typescript file like below:
+
+## Specific Validation Error
+
+### app.component.ts
+```typescript
+import { Component, ViewChild } from '@angular/core';
+import {FormGroup , FormControl, Validators} from '@angular/forms'
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  signupForm=new FormGroup({
+    userName:new FormControl(null,Validators.required),
+    email:new FormControl(null,[Validators.required,Validators.email])
+  })
+
+  get username(){
+    return this.signupForm.get('username');
+  }
+}
+
+```
+
+### app.component.html
+```html
+<div class="alert alert-danger" *ngIf="signupForm.get('email').touched && signupForm.get('email').invalid">
+            <p *ngIf="signupForm.get('email').errors.required">Email is required</p>
+            <p *ngIf="signupForm.get('email').errors.email">Enter Valid Email Id</p>
+          </div>
+```
+
+
+## Implementing Custom Validation
+
