@@ -205,3 +205,37 @@ export class AppComponent {
 
 ## Implementing Custom Validation
 
+For Implement custom validator we need to use ValidatorFn Interface.
+A function that receives a control and synchronously returns a map of validation errors if present, otherwise null.
+```typescript
+interface ValidatorFn {
+  (control: AbstractControl): ValidationErrors | null
+}
+```
+Here is an eaxample of custom validator which will show error when user will enter 'mosh'.
+
+### username.validator.ts
+
+```typescript
+
+import { AbstractControl, ValidationErrors } from '@angular/forms';
+
+export class UserNameValidators{
+ 
+    static UniqueName(control:AbstractControl) : ValidationErrors | null{
+        if((control.value as string)==='mosh'){
+            return{UniqueName:true};
+            return null
+    }
+    }
+}
+```
+## Add custom validator to form control
+
+```typescript
+signupForm=new FormGroup({
+    userName:new FormControl(null,[
+    UserNameValidators.UniqueName
+    ]),
+```
+
