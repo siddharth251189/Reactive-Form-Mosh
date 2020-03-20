@@ -305,4 +305,27 @@ By Accessing pending property of control we can show loader or loader text like 
 
 ```html
 <div *ngIf="signupForm.get('userName').pending">User Name Availability checking</div>
+
+```
+
+## Validating the Form upon Submit
+
+currently we do not have any login servce which can return us true or false so for demo purpose we are seting a error in form error object with help of logon function and on base of error object of form we will show error.
+
+
+```typescript
+ login(){
+    this.signupForm.setErrors({
+      invalidLogin:true
+    })
+    console.log( this.signupForm)
+  }
+```
+For Showing error we need to add a div like below:
+<b>signupForm:This is form refrence from type script file</b>
+
+```html
+<div *ngIf="signupForm.errors" class="alert alert-danger">
+        The username or password is invalid
+      </div>
 ```
