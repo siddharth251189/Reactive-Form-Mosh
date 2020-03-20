@@ -299,3 +299,10 @@ export class AppComponent {
  }
 
 ```
+
+## Showing a Loader Image
+By Accessing pending property of control we can show loader or loader text like below :
+
+```html
+<div *ngIf="signupForm.get('userName').pending">User Name Availability checking</div>
+```
