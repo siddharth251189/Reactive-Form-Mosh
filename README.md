@@ -239,3 +239,63 @@ signupForm=new FormGroup({
     ]),
 ```
 
+## Asynchronous Operations
+If we need to perform any asynchronous task in validators so we need to use another validator function.
+
+```typescript
+interface AsyncValidatorFn {
+  (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null>
+}
+```
+
+Here is the eaxample of asynchronous operations in validators:
+### username.validator.ts
+```typescript
+import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { Observable } from 'rxjs';
+
+export class UserNameValidators{
+    
+ 
+    static UniqueName(control:AbstractControl) : Promise <ValidationErrors | null> | Observable <ValidationErrors | null>{
+       return new Promise((resolve,reject)=>{
+        setTimeout(()=>{
+            if(control.value==='mosh')
+                resolve({UniqueName:true});
+            else
+                    resolve(null);
+        
+        },2000)
+       })
+       
+    }
+}
+
+```
+## Add asynchronous custom validator to form control
+```typescript
+import { UserNameValidators } from './username.validator';
+import { Component, ViewChild } from '@angular/core';
+import {FormGroup , FormControl, Validators} from '@angular/forms'
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  signupForm=new FormGroup({
+    userName: new FormControl(
+      '',
+      [
+        Validators.required,
+        Validators.minLength(3),
+       
+      ],
+      [UserNameValidators.UniqueName]
+    )
+    
+  })
+ }
+
+```
