@@ -169,6 +169,28 @@ userName:new FormControl(null,Validators.required),
 ## Showing Validation Message Method 2
 In method one there is lots of code. we can optimise this code by using a get function. for this we need to add a get function to typescript file like below:
 
+```typescript
+  get username(){
+    return this.signupForm.get('userName');
+  }
+
+```
+Now at place of signupForm.get('userName') we can use only username.so updated code will be:
+
+```html
+
+ <div class="form-group">
+          <label for="">User Name</label>
+          <input type="text" 
+          class="form-control"
+          formControlName="userName"
+          >
+          <div *ngIf="username.touched && username.invalid" class="alert alert-danger">Username is required</div>
+        </div>
+```
+
+
+
 ## Specific Validation Error
 
 ### app.component.ts
@@ -322,10 +344,170 @@ currently we do not have any login servce which can return us true or false so f
   }
 ```
 For Showing error we need to add a div like below:
-<b>signupForm:This is form refrence from type script file</b>
+
 
 ```html
 <div *ngIf="signupForm.errors" class="alert alert-danger">
         The username or password is invalid
       </div>
+```
+
+## Nested FormGroups
+In the angular reactive form we can nest one fomrGroup into another form group. let's see how we can do this.
+
+First we need to create a form group , In this example our parent formGroup will be signupForm and we will nest account FormGroup into this:
+```typescript
+signupForm=new FormGroup({
+    account:new FormGroup({
+      userName: new FormControl(''),
+      email:new FormControl('')
+    })
+    
+  })
+    get username(){
+    return this.signupForm.get('account.userName');
+  }
+
+  get email(){
+    return this.signupForm.get('account.email');
+  }
+```
+Now on the browser we will face some error so for solve these errors we need to add a formGroup into our template also:
+
+```html
+ <div formGroupName="account">
+          <div class="form-group">
+            <label for="">User Name</label>
+            <input type="text" 
+            class="form-control"
+            formControlName="userName"
+            (change)="log(signupForm.get('userName'))"
+            >
+            <div *ngIf="username.pending">User Name Availability checking</div>
+            <div *ngIf="username.touched && username.invalid" class="alert alert-danger">
+              <p *ngIf="username.errors.required">User Name is required</p>
+              <p *ngIf="username.errors.UniqueName">User Name Must be Unique</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="">Email</label>
+            <input type="email" 
+            class="form-control"
+            formControlName="email"
+            
+            >
+            <div class="alert alert-danger" *ngIf="email.touched && email.invalid">
+              <p *ngIf="email.errors.required">Email is required</p>
+              <p *ngIf="email.errors.email">Enter Valid Email Id</p>
+            </div>
+          </div>
+        </div>
+```
+
+
+## Understanding FromArray in Angular Reactive Form 
+A FormArray is responsible for managing a collection of AbstractControl, which can be a FormGroup, a FormControl, or another FormArray.
+
+Just like a FormGroup, which groups AbstractControl objects in an object, a FormArray does the same but in an array. Angular exposes specific APIs to help you manage this collection, which we’ll delve into later on.
+
+### How to use FormArray
+In order to working with FormArray we need to create a FormArray in FormGroup:
+```typescript
+form=new FormGroup({
+    topics:new FormArray([])
+  })
+```
+### Pushing AbstractControl into the FormArray
+```typescript
+addTopic(topic: HTMLInputElement){
+    (this.topics as FormArray).push(new FormControl(topic.value));
+    console.log(this.form.get('topics'))
+    topic.value=''
+  }
+```
+### Removeing AbstractControl into the FormArray
+
+```typescript
+  RemoveTopic(topic:FormControl){
+   let index= this.topics.controls.indexOf(topic);
+   this.topics.removeAt(index)
+  }
+
+```
+### Call RemoveTopic function
+```html
+<li class="list-group-item" 
+*ngFor="let topic of topics.controls"
+(click)="RemoveTopic(topic)"
+>
+    {{topic.value}}
+</li>
+```
+
+### Other FormArray Methods
+```
+removeAt(index):
+```
+This method takes an index and removes the matching AbstractControl. Under the hood, it just calls the native splice method:
+
+```
+insert(index, AbstractControl):
+```
+The opposite of the removeAt() method. It inserts a new AbstractControl at the given index in the controls array:
+
+```
+clear():
+```
+Removes all the elements from the array:
+
+```
+setControl(index, AbstractControl):
+```
+
+Unlike the insert method, it replaces an existing control with the provided one. In this example it’s used in a replace() method, which replaces the first control with a newly created one:
+
+```
+at(index):
+```
+
+
+## FormBuilder
+
+Suppose we have a complex form group like below:
+
+```typescript
+form=new FormGroup({
+  name:new FormControl(),
+  contact:new FormGroup({
+    email:new FormControl(),
+    phone:new FormControl()
+  }),
+  topics:new FormArray([])
+})
+
+```
+
+It looks so messy and complex. In angular we have FormBuilder for this issue.
+
+## How to use FormBuilder
+
+First import FormBuilder from '@angular/forms'
+
+```typescript
+import { FormGroup, FormControl, FormArray, FormBuilder, Validators } from '@angular/forms';
+```
+After import call FormBuilder into constructor in a variable.
+
+```typescript
+constructor(fBuilder:FormBuilder) { 
+  fBuilder.group({
+    name:['',Validators.required],
+    contact:fBuilder.group({
+      email:[],
+      phone:[]
+    }),
+    topics:fBuilder.array([])
+    
+  })
+
 ```
